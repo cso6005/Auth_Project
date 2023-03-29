@@ -43,27 +43,22 @@ public class JwtProvider {
 	
 	public TokenResponse createTokenByLogin(Authentication authentication) throws JsonProcessingException {
 		
-		System.out.println("!!!!!!!!!!!토큰 생성 시작");
 		
 		String accountEmail = authentication.getName();
 		
-		// 권한
 		String authorities = authentication.getAuthorities().stream().map(grantedAuthority -> grantedAuthority.getAuthority()).collect(Collectors.joining(","));
 
 		Subject atkSubject = Subject.atk(accountEmail, authorities);
 
 		String atk = createToken(atkSubject, atkLive);
-		
-		System.out.println(atk);
-				
+						
 		return new TokenResponse(atk, null, null);
 		
 	}
 	
 	private String createToken(Subject subject, Long tokenLive) throws JsonProcessingException {
 		
-		// 객체 -> Json 문자열
-		String subjectStr = objectMapper.writeValueAsString(subject);
+		String subjectStr = objectMapper.writeValueAsString(subject);// 객체 -> Json 문자열
 		
 		Claims claims = Jwts.claims().setIssuer(issuer).setSubject(subjectStr);
 		

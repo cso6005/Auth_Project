@@ -10,8 +10,7 @@ import lombok.Getter;
 public enum UserErrorCode implements ErrorCode {
 	
 	// badRequest 로??
-	// 따로 에러코드 번호 추가할까나,, 
-
+	// 따로 에러코드 번호 추가할지 말지 고민
 	INVALID_SIGNUP_EMAIL_PARAMETER(HttpStatus.BAD_REQUEST,"회원가입 - 이메일 양식이 틀렸습니다."),
 
 	EXISTED_SIGNUP_EMAIL_PARAMETER(HttpStatus.BAD_REQUEST, "회원가입 - 이미 존재하는 이메일입니다."),

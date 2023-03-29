@@ -14,12 +14,5 @@ public class BoardController {
 	@PostMapping("/test")
 	public void test(@RequestParam("id") int num) {
 		System.out.println("테스트");
-		
-		System.out.println(num);
-		
-		
 	}
-	
-	
-
 }

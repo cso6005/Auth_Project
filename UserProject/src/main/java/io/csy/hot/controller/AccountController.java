@@ -26,28 +26,16 @@ public class AccountController {
 	@PostMapping("/sign-up")
 	public void signUp(@Valid @RequestBody SignUpDTO signUp) throws Exception {
 
-		System.out.println(signUp);
 		AccountDTO account = accountService.signUp(signUp);
-
-		System.out.println(account);
-
 	}
 
 	@PostMapping("/login")
 	public TokenResponse login(@Valid @RequestBody LoginDTO login) throws Exception {
 		
-		System.out.println("controller - 로그인");
-
 		TokenResponse token = accountService.login(login);
 		
 		return token;
 
 	}
-
-//	@PostMapping(value = "/logout")
-//	public void logout(@AuthenticationPrincipal AccountDTO account,
-//			@RequestHeader("Authorization") String authorization) throws Exception {
-//		// 컨트롤러 로직
-//	}
 
 }

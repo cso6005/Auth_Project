@@ -19,7 +19,7 @@ public class AccountDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String accountEmail) throws UsernameNotFoundException {
         
 		AccountEntity account = accountRepository.findAllByAccountEmail(accountEmail)
-				.orElseThrow(() -> new UsernameNotFoundException(accountEmail + " 사용자 조회 불가")); //UsernameNotFoundException - RuntimeException
+				.orElseThrow(() -> new UsernameNotFoundException(accountEmail + " 사용자 조회 불가")); 
 
 		return new AccountDetails(account);
 		

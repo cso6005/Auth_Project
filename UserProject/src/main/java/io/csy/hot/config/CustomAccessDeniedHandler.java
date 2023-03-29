@@ -30,9 +30,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public 	void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
 			throws IOException, ServletException {
 
-
 		CommonErrorCode errorCode = CommonErrorCode.ACCESS_DENIED;
-//		LOGGER.warn("HandleAccessDeniedException:CLIENT REQUEST ERROR:INVALID_AUTH_TOKEN: {}", ex.getMessage());
 		String timestamp = new Date().toString();
     	
 		response.setStatus(errorCode.getHttpStatus().value());

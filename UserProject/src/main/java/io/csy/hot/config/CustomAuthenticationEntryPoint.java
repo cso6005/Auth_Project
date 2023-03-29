@@ -31,7 +31,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
             	
 		CommonErrorCode errorCode = CommonErrorCode.AUTH_ERROR;
-//		LOGGER.warn("HandleAccessDeniedException:CLIENT REQUEST ERROR:INVALID_AUTH_TOKEN: {}", ex.getMessage());
 		String timestamp = new Date().toString();
     	
 		response.setStatus(errorCode.getHttpStatus().value());

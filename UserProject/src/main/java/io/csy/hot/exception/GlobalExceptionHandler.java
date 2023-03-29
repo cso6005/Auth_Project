@@ -58,8 +58,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
     // 401 
     // AccessDeniedHandler는 서버에 요청을 할 때 액세스가 가능한지 권한을 체크후 액세스 할 수 없는 요청을 했을시 동작된다.
     // 만약, securityConfig 에서 사용자 유형에 따라 권한이 다르게 설정 할 경우에,  user 계정이 관리자 자원 요청에 시도한 경우에 발생하게 된다.
-    // 여기서 하고싶다면, HandlerExceptionResolver 를 사용해야 함.
-    
+    // 여기서 하고싶다면, HandlerExceptionResolver 를 사용해야 함. 
 //    @ExceptionHandler(AccessDeniedException.class)
 //    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, HttpServletRequest request) {
 //
@@ -124,25 +123,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 		
 	}
 	
-	
-	
-/* 오버라이딩 해야 하는 것들 !!
- * 
- * 			HttpRequestMethodNotSupportedException.class, 
-			HttpMediaTypeNotSupportedException.class,
-			HttpMediaTypeNotAcceptableException.class,
-			MissingPathVariableException.class,
-			MissingServletRequestParameterException.class,
-			ServletRequestBindingException.class,
-			ConversionNotSupportedException.class,
-			TypeMismatchException.class,
-			HttpMessageNotReadableException.class,
-			HttpMessageNotWritableException.class,
-			MethodArgumentNotValidException.class,
-			MissingServletRequestPartException.class,
-			BindException.class,
-			NoHandlerFoundException.class,
-			AsyncRequestTimeoutException.class
- * */
-
 }
