@@ -1,2 +1,5 @@
 
 UserProject/src/main/resources/application.properties
+UserProject/src/main/resources/application.properties
+*.properties
+*.properties
