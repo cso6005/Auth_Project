@@ -92,19 +92,19 @@ public class JwtProvider {
 
 		} catch (SecurityException e) {
 
-			throw new JwtException("잘못된 JWT 시그니처");
+			throw new JwtException("잘못된 JWT 시그니처입니다.");
 
 		} catch (MalformedJwtException e) {
 
-			throw new JwtException("변조된 JWT 토큰");
+			throw new JwtException("올바르게 구성되지 않은 JWT 토큰입니다.");
 
 		} catch (ExpiredJwtException e) {
 
-			throw new JwtException("토큰 기한 만료");
+			throw new JwtException("토큰 기한 만료입니다.");
 
 		} catch (UnsupportedJwtException e) {
 
-			throw new JwtException("Unsupported JWT token.");
+			throw new JwtException("예상하는 형식과 일치하지 않는 특정 형식이나 구성의 JWT 입니다.");
 
 		} catch (IllegalArgumentException e) {
 
@@ -113,6 +113,14 @@ public class JwtProvider {
 
             throw new JwtException("잘못된 토큰입니다.");
         }
+		
+		/**1) ExpiredJwtException : JWT를 생성할 때 지정한 유효기간 초과할 때.
+
+			2) UnsupportedJwtException : 예상하는 형식과 일치하지 않는 특정 형식이나 구성의 JWT일 때
+			
+			3) MalformedJwtException : JWT가 올바르게 구성되지 않았을 때
+			
+			4) SignatureException :  JWT의 기존 서명을 확인하지 못했을 때 **/
 
 
 	}

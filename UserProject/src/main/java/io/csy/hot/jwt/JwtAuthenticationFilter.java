@@ -46,16 +46,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String requestURI = request.getRequestURI();
 
 		if (StringUtils.hasText(authorization)) {
-			String token = authorization.substring(7);
+			String token = authorization.substring(7); // 만약, 여기에서 에러가 난다면, 바로 authenticationException 으로 customAuthenticationEntry 로 넘어감. 예측 가능한, 제어가 필요한 예외를 제외하고 모든 인증 에러는 그냥 401 인증 실패로 응답하자. 
 
-				Subject subject = jwtProvider.getSubject(token);
+				Subject subject = jwtProvider.getSubject(token); // jwt 토큰 관련 에러가 나는 포인트로 잡고 여기서 예외 잡음.
 
 				if (subject.getTokenType().equals("RTK") && requestURI.equals("/auth/reissue")) {
 
 					String rtkReids = redisDao.getValues(subject.getAccountEmail());
 
 					if (Objects.isNull(rtkReids) || !rtkReids.equals(token)) {
-						throw new JwtException("토큰 재발급 도중 예외 발생");
+						throw new JwtException("redis 저장소 rtk 또는 클라이언트 rtk 가 올바르지 않습니다. 확인 바랍니다. ");
 					}
 				}
 
