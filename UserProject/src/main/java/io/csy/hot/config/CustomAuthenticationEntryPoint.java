@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -30,19 +31,40 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
             	
-		CommonErrorCode errorCode = CommonErrorCode.AUTH_ERROR;
 		String timestamp = new Date().toString();
-    	
+		
+		CommonErrorCode errorCode = errorCode(request.getRequestURI());
+		System.out.println("메시지");
+		System.out.println(authException.getMessage());
+				
 		response.setStatus(errorCode.getHttpStatus().value());
     	response.setContentType("application/json");
     	response.setCharacterEncoding("UTF-8");
         
-        ErrorResponse message = new ErrorResponse(timestamp, errorCode.getHttpStatus().value(), errorCode.name(), errorCode.getMessage(), request.getRequestURI());
-        		
-        String res = this.convertObjectToJson(message);
- 
+        ErrorResponse errorMessage = new ErrorResponse(timestamp, errorCode.getHttpStatus().value(), errorCode.name(), errorCode.getMessage(), request.getRequestURI());
+        	    	
+        String res = this.convertObjectToJson(errorMessage);
+        
     	response.getWriter().print(res);
     	
+//        response.setCharacterEncoding("utf-8");
+//        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+//        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//        response.getWriter().write(objectMapper.writeValueAsString(Response.builder()
+//                .status(HttpStatus.UNAUTHORIZED.value())
+//                .message(message)
+//                .build()));
+    	
+    }
+    
+    private CommonErrorCode errorCode(String requestURI) {
+    	
+		if (requestURI.equals("/auth/reissue")) {
+			return CommonErrorCode.REISSUE_AUTH_ERROR;
+		} else {
+			return  CommonErrorCode.AUTH_ERROR;
+		}
+
     }
 
     private String convertObjectToJson(Object object) throws JsonProcessingException {

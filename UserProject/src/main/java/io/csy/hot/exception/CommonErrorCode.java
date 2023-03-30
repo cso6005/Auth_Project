@@ -16,8 +16,14 @@ public enum CommonErrorCode implements ErrorCode {
 		MISSING_PARAMETER(HttpStatus.BAD_REQUEST, "메서드 매개 변수 유형에 필요한 요청 매개 변수 'id'가 없습니다."),
 	     
 	    //401 // AuthenticationException
-	    AUTH_ERROR(HttpStatus.UNAUTHORIZED, "인증에 실패하셨습니다. "),
+	    AUTH_ERROR(HttpStatus.UNAUTHORIZED, "ATK - 인증 실패 "),
 	    
+	    JWT_ERROR(HttpStatus.UNAUTHORIZED, "ATK - JWT 토큰 관련 에러  "),
+	    
+	    REISSUE_AUTH_ERROR(HttpStatus.UNAUTHORIZED, "RTK  - 인증 실패"),
+
+	    REISSUE_JWT_ERROR(HttpStatus.UNAUTHORIZED, "RTK  - JWT 토큰 관련 에러 "),
+
 	    ACCESS_DENIED(HttpStatus.FORBIDDEN, "권한이 없습니다. "),
 	    
 	    //404 // 사실 상 post 가 없으므로 빼도 됨.

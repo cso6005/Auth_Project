@@ -8,6 +8,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,37 +17,46 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import io.jsonwebtoken.JwtException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.csy.hot.common.RedisDAO;
+import io.csy.hot.exception.ErrorResponse;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
 
 	private final AccountDetailsService accountDetailsService;
 
-	public JwtAuthenticationFilter(JwtProvider jwtProvider, AccountDetailsService accountDetailsService) {
-		this.jwtProvider = jwtProvider;
-		this.accountDetailsService = accountDetailsService;
-	}
+	private final RedisDAO redisDao;
+
+	private final ObjectMapper objectMapper;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
 		String authorization = request.getHeader("Authorization");
+		String requestURI = request.getRequestURI();
 
 		if (StringUtils.hasText(authorization)) {
-			String atk = authorization.substring(7);
+			String token = authorization.substring(7);
 
-			try {
+				Subject subject = jwtProvider.getSubject(token);
 
-				Subject subject = jwtProvider.getSubject(atk);
+				if (subject.getTokenType().equals("RTK") && requestURI.equals("/auth/reissue")) {
 
-				String requestURI = request.getRequestURI();
+					String rtkReids = redisDao.getValues(subject.getAccountEmail());
 
-				if (subject.getTokenType().equals("RTK") && !requestURI.equals("/auth/reissue")) {
-
-					throw new JwtException("잘못된 토큰 입니다.");
+					if (Objects.isNull(rtkReids) || !rtkReids.equals(token)) {
+						throw new JwtException("토큰 재발급 도중 예외 발생");
+					}
 				}
 
 				UserDetails userDetails = accountDetailsService.loadUserByUsername(subject.getAccountEmail());
@@ -53,12 +64,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "",
 						userDetails.getAuthorities());
 
-				SecurityContextHolder.getContext().setAuthentication(authentication); // 정상 토큰이면 SecurityContext에 저장
+				SecurityContextHolder.getContext().setAuthentication(authentication); // 정상 토큰이면 인증 객체를 SecurityContext에
 
-			} catch (JwtException ex) {
-				System.out.println("토큰 있긴 한데, 틀린 토큰임.!!!!!");
-			}
 		}
 		filterChain.doFilter(request, response);
 	}
+
 }

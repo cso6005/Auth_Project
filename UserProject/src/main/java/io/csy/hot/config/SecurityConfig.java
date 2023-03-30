@@ -12,22 +12,28 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.csy.hot.common.RedisDAO;
 import io.csy.hot.jwt.AccountDetailsService;
 import io.csy.hot.jwt.JwtAuthenticationFilter;
+import io.csy.hot.jwt.JwtExceptionFilter;
 import io.csy.hot.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
-@EnableWebSecurity  
+@EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-	
+
 	private final JwtProvider jwtProvider;
 	private final AccountDetailsService accountDetailsService;
-	
+	private final RedisDAO redisDAO;
+	private final ObjectMapper objectMapper;
+
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-	
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 
@@ -35,29 +41,24 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-	    return authenticationConfiguration.getAuthenticationManager();
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+			throws Exception {
+		return authenticationConfiguration.getAuthenticationManager();
 	}
-	
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-		http.cors().and().csrf().disable()
-		.exceptionHandling()
-		.accessDeniedHandler(customAccessDeniedHandler)
-		.authenticationEntryPoint(customAuthenticationEntryPoint)
-		.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		
-        http
-        .authorizeRequests()
-        .antMatchers("/board/test").hasRole("USER")
-            .antMatchers("/auth/**").permitAll()
-            .anyRequest().authenticated();	
-		
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtProvider, accountDetailsService),
-				UsernamePasswordAuthenticationFilter.class);
-		
+		http.cors().and().csrf().disable().exceptionHandling().accessDeniedHandler(customAccessDeniedHandler)
+				.authenticationEntryPoint(customAuthenticationEntryPoint).and().sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+		http.authorizeRequests().antMatchers("/board/test").hasRole("ADMIN")
+		.antMatchers("/auth/login", "/auth/sign-up").permitAll().anyRequest().authenticated();
+
+		http.addFilterBefore(new JwtAuthenticationFilter(jwtProvider, accountDetailsService, redisDAO, objectMapper),
+				UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(new JwtExceptionFilter(), JwtAuthenticationFilter.class);;
 
 		return http.build();
 	}
