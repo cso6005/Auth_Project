@@ -1,0 +1,4 @@
+*.properties
+.mvn/
+mvnw.cmd
+maven-wrapper.jar
