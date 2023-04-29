@@ -55,8 +55,8 @@ public class SecurityConfig {
 				.authenticationEntryPoint(customAuthenticationEntryPoint).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-		http.authorizeRequests().antMatchers("/api/v1/board/test").hasRole("ADMIN")
-		.antMatchers("/api/v1/auth/login", "/api/v1/auth/sign-up").permitAll().anyRequest().authenticated();
+		http.authorizeRequests().antMatchers("/board/test").hasRole("ADMIN")
+		.antMatchers("/auth/login", "/auth/sign-up").permitAll().anyRequest().authenticated();
 
 		http.addFilterBefore(new JwtAuthenticationFilter(jwtProvider, accountDetailsService, redisDAO, objectMapper, redisTemplate),
 				UsernamePasswordAuthenticationFilter.class)
